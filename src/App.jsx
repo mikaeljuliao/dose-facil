@@ -28,13 +28,15 @@ import { getLocalDateString } from './utils/reminderEngine';
 import { generateDosesForDate, isSameMedication } from './utils/businessLogic';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('inicio');
-  const [selectedDate, setSelectedDate] = useState(getLocalDateString());
-  const [medications, setMedications] = useState([]);
-  const [treatments, setTreatments] = useState([]);
-  const [doses, setDoses] = useState([]);
-  const [history, setHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // After initial data load, hide loader
+  useEffect(() => {
+    setMedications(getStoredMedications());
+    setTreatments(getStoredTreatments());
+    setHistory(getStoredHistory());
+    setIsLoading(false);
+  }, []);
   const futureDoses = useMemo(() => {
     const result = [];
     const baseDate = new Date();
@@ -449,6 +451,7 @@ export default function App() {
             doses={doses}
             futureDoses={futureDoses}
             medications={medications}
+            history={history}
             onToggleDoseStatus={handleToggleDoseStatus}
             onUpdateDose={handleUpdateDose}
             onSnoozeDose={handleSnoozeDose}
