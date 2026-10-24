@@ -7,12 +7,15 @@ import {
   Search,
   Trash2,
 } from 'lucide-react';
+import SkeletonLoader from '../common/SkeletonLoader';
+import EmptyState from '../common/EmptyState';
 
 export default function MedicationListView({
   medications = [],
   onOpenAdd,
   onDelete,
   onViewDetails,
+  isLoading = false,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -55,7 +58,9 @@ export default function MedicationListView({
         </div>
       </div>
 
-      {medications.length > 0 && (
+      {isLoading ? (
+        <SkeletonLoader rows={3} className="p-4" />
+      ) : medications.length > 0 ? (
         <div className="relative">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           <input
@@ -67,22 +72,15 @@ export default function MedicationListView({
             aria-label="Buscar remédio"
           />
         </div>
-      )}
+      ) : null}
 
       {filtered.length === 0 ? (
-        <div className="rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-3xl shadow-sm">
-            💊
-          </div>
-          <h2 className="mt-4 text-xl font-black text-slate-900">
-            {searchTerm ? 'Nenhum remédio encontrado' : 'Nenhum remédio cadastrado'}
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm font-medium leading-5 text-slate-600">
-            {searchTerm
-              ? 'Tente buscar pelo nome do remédio ou pelo princípio ativo.'
-              : 'Quando você adicionar um remédio, ele aparecerá aqui com os horários dos lembretes.'}
-          </p>
-        </div>
+        <EmptyState
+          title={searchTerm ? 'Nenhum remédio encontrado' : 'Nenhum remédio cadastrado'}
+          description={searchTerm ? 'Tente buscar pelo nome do remédio ou pelo princípio ativo.' : 'Quando você adicionar um remédio, ele aparecerá aqui com os horários dos lembretes.'}
+          actionLabel="Adicionar remédio"
+          onAction={onOpenAdd}
+        />
       ) : (
         <div className="space-y-3">
           <div className="flex items-end justify-between gap-3 px-1">
